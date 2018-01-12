@@ -9,12 +9,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Button b1;
     Button b2;
     TextView tv;
     boolean mstop;
     int counter = 0;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv = findViewById(R.id.textView);
         b1.setOnClickListener(this);
         b2.setOnClickListener(this);
+        handler = new Handler(getApplicationContext().getMainLooper());
     }
 
 
@@ -36,23 +40,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+
                         while (mstop) {
                             Log.d("Value is :", "Thread is :" + Thread.currentThread().getId());
-                            // tv.setText(counter);
+                            counter++;
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    tv.setText("hello " + new Date());
+                                }
+                            });
                         }
                     }
-                        }).start();
+                }).start();
 
-                    break;
+                break;
             case R.id.button2:
-                    mstop =false;
-                Log.d("Value is :","Thread is :"+Thread.currentThread().
-
-                    getId());
+                mstop = false;
+                Log.d("Stopping :", "Thread is :" + Thread.currentThread().getId());
                 break;
 
-                }
-
-
         }
+
+
     }
+}
